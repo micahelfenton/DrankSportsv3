@@ -1,0 +1,5 @@
+{
+  "name": "SportMix - Live Second-Screen Game",
+  "description": "A high-energy, multiplayer second-screen application designed for live sports viewing. Create custom drinking or fantasy rules, play mini-games, and compete in AI-generated trivia quizzes using Gemini.",
+  "requestFramePermissions": []
+}
