@@ -2,6 +2,7 @@
 export type Screen =
   | 'home'
   | 'setup'
+  | 'join'
   | 'lobby'
   | 'rules'
   | 'gameplay'

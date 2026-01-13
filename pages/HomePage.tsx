@@ -18,14 +18,14 @@ export function HomePage({ onHost, onJoin }: HomePageProps) {
       >
         <div className="inline-block px-4 py-1 rounded-full bg-indigo-950/50 border border-indigo-500/30 mb-6">
           <span className="text-xs font-bold tracking-[0.2em] text-indigo-300 uppercase">
-            SportMix Engine v2.0
+            drnkly engine v2.0
           </span>
         </div>
-        <h1 className="text-6xl font-black text-white mb-2 tracking-tighter text-shadow-lg leading-none">
-          SPORT<span className="text-rose-500">MIX</span>
+        <h1 className="text-5xl font-black text-white mb-2 tracking-tighter text-shadow-lg leading-none uppercase">
+          DRNKLY<span className="text-rose-500">SPORTS</span>
         </h1>
-        <p className="text-indigo-200 font-bold tracking-[0.3em] text-sm uppercase">
-          Live Second-Screen Fun
+        <p className="text-indigo-200 font-bold tracking-[0.1em] text-[10px] sm:text-xs uppercase max-w-[280px] mx-auto leading-relaxed">
+          the only app with a 100% hydration penalty
         </p>
       </motion.div>
 

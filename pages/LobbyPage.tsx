@@ -44,7 +44,7 @@ export function LobbyPage({ players, onStart, onQuit, roomCode }: LobbyPageProps
             </div>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-black uppercase tracking-wide">Live Sports Room</h3>
+            <h3 className="text-xl font-black uppercase tracking-wide">drnkly sports room</h3>
             <p className="text-indigo-300 text-sm font-medium">Waiting for players...</p>
           </div>
         </Card>

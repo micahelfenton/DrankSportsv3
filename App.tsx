@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Screen, Player, Rule } from './types';
 import { HomePage } from './pages/HomePage';
 import { SetupRoomPage } from './pages/SetupRoomPage';
+import { JoinRoomPage } from './pages/JoinRoomPage';
 import { LobbyPage } from './pages/LobbyPage';
 import { GameRulesPage } from './pages/GameRulesPage';
 import { GamePlayPage } from './pages/GamePlayPage';
@@ -39,6 +40,20 @@ export function App() {
     setCurrentScreen('lobby');
   };
 
+  const handleJoinRoom = (nickname: string, code: string) => {
+    const newPlayer: Player = {
+      id: `player-${Date.now()}`,
+      name: nickname,
+      initial: nickname.charAt(0).toUpperCase(),
+      score: 0,
+      isHost: false
+    };
+    // In a real app, we'd fetch the current room's players and sport.
+    // For this prototype, we'll just add the player to the local state.
+    setPlayers(prev => [...prev, newPlayer]);
+    setCurrentScreen('lobby');
+  };
+
   const toggleRule = (id: string) => {
     setRules(prev => prev.map(r => r.id === id ? { ...r, active: !r.active } : r));
   };
@@ -68,26 +83,85 @@ export function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <HomePage onHost={() => setCurrentScreen('setup')} onJoin={() => setCurrentScreen('lobby')} />;
+        return (
+          <HomePage 
+            onHost={() => setCurrentScreen('setup')} 
+            onJoin={() => setCurrentScreen('join')} 
+          />
+        );
       case 'setup':
-        return <SetupRoomPage onContinue={handleCreateRoom} onBack={() => setCurrentScreen('home')} />;
+        return (
+          <SetupRoomPage 
+            onContinue={handleCreateRoom} 
+            onBack={() => setCurrentScreen('home')} 
+          />
+        );
+      case 'join':
+        return (
+          <JoinRoomPage 
+            validRoomCode={roomCode}
+            onJoin={handleJoinRoom}
+            onBack={() => setCurrentScreen('home')}
+          />
+        );
       case 'lobby':
-        return <LobbyPage players={players} roomCode={roomCode} onStart={() => setCurrentScreen('rules')} onQuit={() => setCurrentScreen('home')} />;
+        return (
+          <LobbyPage 
+            players={players} 
+            roomCode={roomCode} 
+            onStart={() => setCurrentScreen('rules')} 
+            onQuit={() => setCurrentScreen('home')} 
+          />
+        );
       case 'rules':
-        return <GameRulesPage rules={rules} onToggleRule={toggleRule} roomCode={roomCode} onBack={() => setCurrentScreen('lobby')} onQuit={() => setCurrentScreen('home')} onStartGame={() => setCurrentScreen('gameplay')} />;
+        return (
+          <GameRulesPage 
+            rules={rules} 
+            onToggleRule={toggleRule} 
+            roomCode={roomCode} 
+            onBack={() => setCurrentScreen('lobby')} 
+            onQuit={() => setCurrentScreen('home')} 
+            onStartGame={() => setCurrentScreen('gameplay')} 
+          />
+        );
       case 'gameplay':
-        return <GamePlayPage rules={rules} roomCode={roomCode} onQuit={() => setCurrentScreen('home')} onTriggerQuiz={() => setCurrentScreen('quiz')} onRuleTap={handleRuleTap} onViewLeaderboard={() => setCurrentScreen('leaderboard')} />;
+        return (
+          <GamePlayPage 
+            rules={rules} 
+            roomCode={roomCode} 
+            onQuit={() => setCurrentScreen('home')} 
+            onTriggerQuiz={() => setCurrentScreen('quiz')} 
+            onRuleTap={handleRuleTap} 
+            onViewLeaderboard={() => setCurrentScreen('leaderboard')} 
+          />
+        );
       case 'minigame':
-        return <MiniGamePage ruleName={currentTriggerRule} onComplete={handleMiniGameComplete} />;
+        return (
+          <MiniGamePage 
+            ruleName={currentTriggerRule} 
+            onComplete={handleMiniGameComplete} 
+          />
+        );
       case 'quiz':
-        return <QuizPage sport={sport} onComplete={(correct) => {
-          if (!correct) setPlayers(prev => prev.map(p => ({ ...p, score: p.score + 2 })));
-          setCurrentScreen('gameplay');
-        }} onQuit={() => setCurrentScreen('gameplay')} />;
+        return (
+          <QuizPage 
+            sport={sport} 
+            onComplete={(correct) => {
+              if (!correct) setPlayers(prev => prev.map(p => ({ ...p, score: p.score + 2 })));
+              setCurrentScreen('gameplay');
+            }} 
+            onQuit={() => setCurrentScreen('gameplay')} 
+          />
+        );
       case 'leaderboard':
-        return <LeaderboardPage players={players} onBack={() => setCurrentScreen('gameplay')} />;
+        return (
+          <LeaderboardPage 
+            players={players} 
+            onBack={() => setCurrentScreen('gameplay')} 
+          />
+        );
       default:
-        return <HomePage onHost={() => setCurrentScreen('setup')} onJoin={() => setCurrentScreen('lobby')} />;
+        return <HomePage onHost={() => setCurrentScreen('setup')} onJoin={() => setCurrentScreen('join')} />;
     }
   };
 
