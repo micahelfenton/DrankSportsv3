@@ -2,9 +2,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { QuizQuestionData } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 export async function generateSportsQuiz(sport: string): Promise<QuizQuestionData> {
+  // Create a new GoogleGenAI instance right before making an API call to ensure it uses the most up-to-date API key
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",

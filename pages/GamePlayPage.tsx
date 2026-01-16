@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../components/Button';
 import { RuleTapButton } from '../components/RuleTapButton';
-import { Plus, Sparkles, Trophy } from 'lucide-react';
+import { Sparkles, Trophy } from 'lucide-react';
 import { Rule } from '../types';
 
 interface GamePlayPageProps {
@@ -52,15 +52,19 @@ export function GamePlayPage({ rules, roomCode, onQuit, onTriggerQuiz, onRuleTap
       </motion.div>
 
       <div className="flex-1 overflow-y-auto space-y-4 pb-6 pr-1">
-        {activeRules.map((rule, index) => (
-          <motion.div key={rule.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }}>
-            <RuleTapButton title={rule.title} isActive={rule.active} onTap={() => onRuleTap(rule.id)} />
-          </motion.div>
-        ))}
-        <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="w-full p-5 rounded-2xl border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/50 bg-transparent text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-          <Plus className="w-5 h-5" />
-          Add Rule
-        </motion.button>
+        {activeRules.length > 0 ? (
+          activeRules.map((rule, index) => (
+            <motion.div key={rule.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }}>
+              <RuleTapButton title={rule.title} isActive={rule.active} onTap={() => onRuleTap(rule.id)} />
+            </motion.div>
+          ))
+        ) : (
+          <div className="text-center py-12 px-6 border-2 border-dashed border-slate-800 rounded-2xl">
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-sm italic">
+              No active triggers selected.<br/>Check settings!
+            </p>
+          </div>
+        )}
       </div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-6">

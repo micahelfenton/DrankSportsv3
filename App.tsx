@@ -48,8 +48,6 @@ export function App() {
       score: 0,
       isHost: false
     };
-    // In a real app, we'd fetch the current room's players and sport.
-    // For this prototype, we'll just add the player to the local state.
     setPlayers(prev => [...prev, newPlayer]);
     setCurrentScreen('lobby');
   };
@@ -58,14 +56,26 @@ export function App() {
     setRules(prev => prev.map(r => r.id === id ? { ...r, active: !r.active } : r));
   };
 
+  const addRule = (title: string, penalty: string) => {
+    const newRule: Rule = {
+      id: `rule-${Date.now()}`,
+      title: title,
+      penalty: penalty,
+      active: true,
+    };
+    setRules(prev => [...prev, newRule]);
+  };
+
+  const deleteRule = (id: string) => {
+    setRules(prev => prev.filter(r => r.id !== id));
+  };
+
   const handleRuleTap = (ruleId: string) => {
     const rule = rules.find(r => r.id === ruleId);
     if (!rule) return;
 
-    // Simulate score increment
     setPlayers(prev => prev.map(p => ({ ...p, score: p.score + 1 })));
 
-    // Specific trigger for minigame if title contains "Mini Game"
     if (rule.title.includes('Mini Game')) {
       setCurrentTriggerRule(rule.title);
       setCurrentScreen('minigame');
@@ -74,7 +84,6 @@ export function App() {
 
   const handleMiniGameComplete = (success: boolean) => {
     if (!success) {
-      // Penalty for failing
       setPlayers(prev => prev.map(p => ({ ...p, score: p.score + 2 })));
     }
     setCurrentScreen('gameplay');
@@ -118,6 +127,8 @@ export function App() {
           <GameRulesPage 
             rules={rules} 
             onToggleRule={toggleRule} 
+            onAddRule={addRule}
+            onDeleteRule={deleteRule}
             roomCode={roomCode} 
             onBack={() => setCurrentScreen('lobby')} 
             onQuit={() => setCurrentScreen('home')} 

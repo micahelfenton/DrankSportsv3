@@ -9,6 +9,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   value?: string | number | readonly string[];
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  // Explicitly add autoFocus to resolve TypeScript error in consumers
+  autoFocus?: boolean;
 }
 
 export function Input({ label, error, className = '', ...props }: InputProps) {
