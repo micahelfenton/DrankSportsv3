@@ -1,25 +1,75 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../components/Button';
 import { RuleTapButton } from '../components/RuleTapButton';
-import { Sparkles, Trophy } from 'lucide-react';
+import { Sparkles, Trophy, AlertTriangle } from 'lucide-react';
 import { Rule } from '../types';
 
 interface GamePlayPageProps {
   rules: Rule[];
   roomCode: string;
+  activePenalty: { playerName: string; penalty: string } | null;
   onQuit: () => void;
   onTriggerQuiz: () => void;
   onRuleTap: (ruleId: string) => void;
   onViewLeaderboard: () => void;
 }
 
-export function GamePlayPage({ rules, roomCode, onQuit, onTriggerQuiz, onRuleTap, onViewLeaderboard }: GamePlayPageProps) {
+export function GamePlayPage({ 
+  rules, 
+  roomCode, 
+  activePenalty,
+  onQuit, 
+  onTriggerQuiz, 
+  onRuleTap, 
+  onViewLeaderboard 
+}: GamePlayPageProps) {
   const activeRules = rules.filter(r => r.active);
   
   return (
-    <div className="flex flex-col h-full w-full max-w-md mx-auto px-4 py-6">
+    <div className="flex flex-col h-full w-full max-w-md mx-auto px-4 py-6 relative">
+      {/* Penalty Overlay */}
+      <AnimatePresence>
+        {activePenalty && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.5, rotate: -5, y: 50 }}
+              animate={{ scale: 1, rotate: 0, y: 0 }}
+              exit={{ scale: 1.5, opacity: 0 }}
+              className="w-full bg-rose-600 rounded-[2.5rem] p-8 text-center shadow-[0_0_80px_rgba(225,29,72,0.4)] border-4 border-white/20 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1] }} 
+                transition={{ duration: 0.5, repeat: Infinity }}
+                className="mb-6 flex justify-center"
+              >
+                <AlertTriangle className="w-20 h-20 text-white fill-white/20" />
+              </motion.div>
+              <h2 className="text-4xl font-black italic uppercase text-white mb-2 tracking-tighter">
+                LAST TAP!
+              </h2>
+              <div className="bg-black/20 rounded-2xl py-4 px-2 mb-4">
+                <p className="text-white text-3xl font-black uppercase tracking-tight mb-1 truncate">
+                  {activePenalty.playerName}
+                </p>
+                <div className="h-px bg-white/20 w-12 mx-auto mb-2" />
+                <p className="text-rose-100 text-xl font-bold uppercase italic tracking-widest">
+                  {activePenalty.penalty}
+                </p>
+              </div>
+              <p className="text-white/60 text-xs font-black uppercase tracking-[0.2em]">Hydrate Immediately</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex justify-between items-start mb-6">
         <div>
           <p className="text-rose-500 text-xs font-bold uppercase tracking-widest mb-1">Match Live</p>
@@ -55,7 +105,12 @@ export function GamePlayPage({ rules, roomCode, onQuit, onTriggerQuiz, onRuleTap
         {activeRules.length > 0 ? (
           activeRules.map((rule, index) => (
             <motion.div key={rule.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }}>
-              <RuleTapButton title={rule.title} isActive={rule.active} onTap={() => onRuleTap(rule.id)} />
+              <RuleTapButton 
+                title={rule.title} 
+                isActive={rule.active} 
+                onTap={() => onRuleTap(rule.id)} 
+                disabled={!!activePenalty}
+              />
             </motion.div>
           ))
         ) : (

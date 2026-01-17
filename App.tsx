@@ -26,6 +26,7 @@ export function App() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [rules, setRules] = useState<Rule[]>(INITIAL_RULES);
   const [currentTriggerRule, setCurrentTriggerRule] = useState<string>('');
+  const [activePenalty, setActivePenalty] = useState<{ playerName: string; penalty: string } | null>(null);
 
   const handleCreateRoom = (nickname: string, selectedSport: string) => {
     const host: Player = {
@@ -74,11 +75,25 @@ export function App() {
     const rule = rules.find(r => r.id === ruleId);
     if (!rule) return;
 
+    // In a multi-device setup, the backend determines the "last" clicker.
+    // For this prototype, the person who taps is treated as the "last/loser" to demonstrate the UI.
+    const currentPlayer = players[0]; // For demo purposes, we use the local player
+    
     setPlayers(prev => prev.map(p => ({ ...p, score: p.score + 1 })));
 
     if (rule.title.includes('Mini Game')) {
       setCurrentTriggerRule(rule.title);
       setCurrentScreen('minigame');
+    } else {
+      // Trigger the 2-second penalty notice
+      setActivePenalty({
+        playerName: currentPlayer.name,
+        penalty: rule.penalty
+      });
+      
+      setTimeout(() => {
+        setActivePenalty(null);
+      }, 2000);
     }
   };
 
@@ -140,6 +155,7 @@ export function App() {
           <GamePlayPage 
             rules={rules} 
             roomCode={roomCode} 
+            activePenalty={activePenalty}
             onQuit={() => setCurrentScreen('home')} 
             onTriggerQuiz={() => setCurrentScreen('quiz')} 
             onRuleTap={handleRuleTap} 
